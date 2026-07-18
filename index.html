@@ -145,7 +145,7 @@
                 // Enllaç de la imatge
                 const enllacImg = document.createElement('a');
                 enllacImg.href = item.url_desti;
-                enllacImg.target = "_top"; 
+                enllacImg.target = "_blank"; 
                 
                 const img = document.createElement('img');
                 img.src = rutaImatge;
@@ -156,7 +156,7 @@
                 // Enllaç del text
                 const enllacText = document.createElement('a');
                 enllacText.href = item.url_desti;
-                enllacText.target = "_top"; 
+                enllacText.target = "_blank"; 
                 enllacText.textContent = item.text;
 
                 divItem.appendChild(enllacImg);
