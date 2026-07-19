@@ -12,33 +12,34 @@
             font-size: 11px; 
             margin: 0; 
             padding: 10px; 
-            /* Evitem que apareguin barres de desplaçament dobles molt lletges */
-            overflow: hidden; 
+            /* Permet fer scroll cap avall amb el dit si la caixa queda curta al mòbil */
+            overflow-x: hidden;
+            overflow-y: auto; 
         }
         
-        /* CONTENIDOR FLEXIBLE: Els elements flueixen com paraules */
+        /* CONTENIDOR FLEXIBLE */
         .grelha-enllacos { 
             display: flex;
-            flex-wrap: wrap;       /* Activa el salt de línia automàtic quan no hi ha lloc */
-            justify-content: center; /* Centra els projectes a la pantalla */
-            gap: 20px;             /* Espai de separació constant entre blocs */
+            flex-wrap: wrap;       
+            justify-content: center; 
+            gap: 16px;             /* Reduït una mica per guanyar espai */
             width: 100%; 
             box-sizing: border-box; 
         }
         
-        /* CADA ELEMENT INDIVIDUAL (Targeta fixa de mida fixa) */
+        /* CADA ELEMENT INDIVIDUAL (Configuració per a PC) */
         .item-enllac { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             text-align: center; 
-            width: 130px;          /* Mida constant i perfecta tant per PC com per Mòbil */
+            width: 130px;          
             box-sizing: border-box;
         }
         
         .item-enllac img { 
             width: 100%; 
-            height: 130px;         /* Forcem que siguin perfectament quadrades */
+            height: 130px;         
             object-fit: cover; 
             border: none; 
             margin-bottom: 8px; 
@@ -55,6 +56,25 @@
         
         .item-enllac a:hover { 
             text-decoration: underline; 
+        }
+
+        /* =========================================================================
+           DISSENY ESPECÍFIC PER A MÒBILS (Pantalles inferiors a 600 píxels d'amplada)
+           ========================================================================= */
+        @media (max-width: 600px) {
+            .grelha-enllacos {
+                gap: 12px; /* Espaiat més compacte */
+            }
+            .item-enllac { 
+                width: 100px; /* Targetes més petites perquè hi caben 3 per línia */
+            }
+            .item-enllac img { 
+                height: 100px; /* Imatges proporcionalment quadrades més compactes */
+                margin-bottom: 6px;
+            }
+            .item-enllac a {
+                font-size: 10px; /* Text lleugerament més petit per evitar talls agres */
+            }
         }
     </style>
 </head>
