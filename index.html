@@ -141,7 +141,17 @@
         const contenidor = document.getElementById('contenidorEnllacos');
 
         let urlPaginaActual = "";
-        try { urlPaginaActual = decodeURIComponent(document.referrer).toLowerCase(); } catch(e) { urlPaginaActual = document.referrer.toLowerCase(); }
+        let titolPaginaActual = "";
+        
+        try { 
+            const referrer = decodeURIComponent(document.referrer).toLowerCase();
+            urlPaginaActual = referrer;
+            // Extraiem l'última part de la URL (el títol de la pàgina que Sites converteix amb guions)
+            const partsUrl = referrer.split('/');
+            titolPaginaActual = partsUrl[partsUrl.length - 1] || "";
+        } catch(e) { 
+            urlPaginaActual = document.referrer.toLowerCase(); 
+        }
 
         fetch(URL_CSV_SHEETS)
             .then(response => response.text())
@@ -158,7 +168,19 @@
                         const url = columnes[1] ? columnes[1].replace(/"/g, "").trim() : "";
                         const idDrive = columnes[2].replace(/"/g, "").trim();
 
+                        // --- SISTEMA DE FILTRATGE REFORÇAT ---
+                        const textNet = txt.toLowerCase().trim();
+                        // Creem una versió del text amb guions, tal com fa Google Sites a les URLs
+                        const textAmbGuions = textNet.replace(/\s+/g, '-'); 
+
+                        // 1. Si la URL coincideix
                         if (url && urlPaginaActual.includes(url.toLowerCase().trim())) continue;
+                        
+                        // 2. Si el títol final de la URL coincideix amb el nom del projecte (normal o amb guions)
+                        if (titolPaginaActual && (titolPaginaActual === textAmbGuions || titolPaginaActual.includes(textAmbGuions))) continue;
+                        
+                        // 3. Seguretat per si de cas es compara el text net directament a la URL
+                        if (urlPaginaActual.includes(textAmbGuions)) continue;
 
                         const divItem = document.createElement('div');
                         divItem.className = 'item-enllac';
