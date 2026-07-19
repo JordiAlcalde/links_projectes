@@ -23,8 +23,9 @@
 
         .grelha-enllacos {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 20px;
+            /* L'ordinador farà tantes columnes com pugui (fins a 6), però al mòbil es repartiran soles */
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 15px;
             width: 100%;
             box-sizing: border-box;
         }
@@ -34,18 +35,18 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
+            width: 100%; /* Ens assegurem que el contenidor ocupi el seu espai */
         }
 
         .item-enllac img {
             width: 100%;
-            max-width: 150px;
+            max-width: 150px; /* Evita que creixin massa en pantalles intermèdies */
             height: auto;
             aspect-ratio: 1 / 1;
             object-fit: cover;
             border: none;
             margin-bottom: 8px;
             cursor: pointer;
-            transition: opacity 0.2s ease;
         }
 
         .item-enllac img:hover {
@@ -66,7 +67,7 @@
 <body>
 
     <div class="grelha-enllacos" id="contenidorEnllacos">
-        <div style="grid-column: span 5; text-align: center; padding: 20px;">Carregant projectes...</div>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 20px;">Carregant projectes...</div>
     </div>
 
     <script>
