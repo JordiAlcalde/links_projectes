@@ -11,41 +11,48 @@
             font-family: 'Montserrat', sans-serif; 
             font-size: 11px; 
             margin: 0; 
-            padding: 5px; 
+            padding: 0; /* Eliminem el padding fix per guanyar precisió */
             height: 100%;
+            width: 100%;
             box-sizing: border-box;
-            overflow: hidden; /* Evitem qualsevol scroll a la finestra exterior */
+            overflow: hidden;
+            
+            /* LA MÀGIA PER AL PC: Centrem tot el bloc verticalment dins de la capsa de Google Sites */
+            display: flex;
+            align-items: center; 
+            justify-content: center;
         }
 
-        /* CONTENIDOR PRINCIPAL: Limita l'alçada i activa l'scroll HORITZONTAL */
+        /* CONTENIDOR PRINCIPAL: Ocupa tota l'amplada i es flexibilitza */
         .contenidor-principal {
             width: 100%;
-            height: 100%;
-            overflow-x: auto; /* Activa l'scroll lateral si els elements surten per la dreta */
-            overflow-y: hidden; /* Bloqueja el moviment vertical */
-            padding-bottom: 5px;
+            max-height: 100%; /* Evita desbordaments */
+            overflow-x: auto; 
+            overflow-y: hidden; 
+            padding-bottom: 8px; /* Espai just per a la barra d'scroll */
             display: flex;
-            align-items: center; /* Centra els elements verticalment */
+            align-items: center;
         }
         
-        /* LA GRAELLA: Ara es converteix en una línia contínua sense salts */
+        /* LA GRAELLA: En línia contínua */
         .grelha-enllacos { 
             display: flex;
-            flex-direction: row;  /* Força a col·locar-se un al costat de l'altre */
-            flex-wrap: nowrap;     /* PROHIBEIX saltar de línia cap avall */
-            gap: 20px;             
-            padding-left: 10px;
-            padding-right: 20px;
+            flex-direction: row;  
+            flex-wrap: nowrap;     
+            gap: 24px; /* Una mica més d'espai elegant entre projectes al PC */
+            padding-left: 15px;
+            padding-right: 15px;
+            margin: 0 auto; /* Centra la fila si hi ha pocs elements */
         }
         
-        /* CADA ELEMENT INDIVIDUAL (Mida fixa idèntica per a tot arreu) */
+        /* CADA ELEMENT INDIVIDUAL */
         .item-enllac { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             text-align: center; 
             width: 125px;          
-            flex-shrink: 0; /* CRUCIAL: Evita que el navegador aixafi les imatges per encabir-les */
+            flex-shrink: 0; 
             box-sizing: border-box;
         }
         
@@ -56,6 +63,11 @@
             border: none; 
             margin-bottom: 8px; 
             cursor: pointer; 
+            transition: transform 0.2s ease;
+        }
+
+        .item-enllac img:hover {
+            transform: scale(1.03); /* Un lleuger efecte al PC en passar el ratolí */
         }
         
         .item-enllac a { 
@@ -70,28 +82,36 @@
             text-decoration: underline; 
         }
 
-        /* Estilització de la barra d'scroll horitzontal inferior */
+        /* Barra d'scroll elegant */
         .contenidor-principal::-webkit-scrollbar {
-            height: 6px; /* Alçada de la barra horitzontal */
+            height: 5px;
         }
         .contenidor-principal::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: transparent; /* Més net, sense fons gris */
         }
         .contenidor-principal::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 3px;
+            background: #dbdbdb;
+            border-radius: 10px;
         }
         .contenidor-principal::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
+            background: #b5b5b5;
         }
 
-        /* Ajust lleuger per a mòbils (només fem les targetes un pèl més compactes) */
+        /* DISSENY OPTIMITZAT PER A MÒBILS */
         @media (max-width: 600px) {
+            html, body {
+                align-items: flex-start; /* Al mòbil iniciem a dalt de tot per aprofitar l'espai */
+                padding-top: 5px;
+            }
+            .grelha-enllacos {
+                gap: 14px;
+                margin: 0; /* Al mòbil alineem a l'esquerra per al lliscament */
+            }
             .item-enllac { 
-                width: 110px;          
+                width: 108px;          
             }
             .item-enllac img { 
-                height: 110px;         
+                height: 108px;         
             }
         }
     </style>
