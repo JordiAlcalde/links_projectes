@@ -2,47 +2,56 @@
 <html lang="ca">
 <head>
     <meta charset="UTF-8">
-    <title>Galeria Fluida</title>
+    <title>Galeria Scrollable</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { 
+        html, body {
             background-color: #FFFFFF; 
             color: #000000; 
             font-family: 'Montserrat', sans-serif; 
             font-size: 11px; 
             margin: 0; 
-            padding: 10px; 
-            /* Permet fer scroll cap avall amb el dit si la caixa queda curta al mòbil */
+            padding: 5px; 
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        /* CONTENIDOR PRINCIPAL: Activa l'scroll vertical si el contingut supera l'alçada */
+        .contenidor-principal {
+            width: 100%;
+            height: 100%;
             overflow-x: hidden;
-            overflow-y: auto; 
+            overflow-y: auto; /* Permet lliscar cap avall */
+            padding-right: 5px; /* Espai per a la barra de scroll */
         }
         
-        /* CONTENIDOR FLEXIBLE */
+        /* LA GRAELLA FLEXIBLE */
         .grelha-enllacos { 
             display: flex;
             flex-wrap: wrap;       
             justify-content: center; 
-            gap: 16px;             /* Reduït una mica per guanyar espai */
+            gap: 16px;             
             width: 100%; 
             box-sizing: border-box; 
         }
         
-        /* CADA ELEMENT INDIVIDUAL (Configuració per a PC) */
+        /* CADA ELEMENT INDIVIDUAL (PC) */
         .item-enllac { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             text-align: center; 
-            width: 130px;          
+            width: 125px;          
             box-sizing: border-box;
+            margin-bottom: 5px;
         }
         
         .item-enllac img { 
             width: 100%; 
-            height: 130px;         
+            height: 125px;         
             object-fit: cover; 
             border: none; 
-            margin-bottom: 8px; 
+            margin-bottom: 6px; 
             cursor: pointer; 
         }
         
@@ -58,29 +67,44 @@
             text-decoration: underline; 
         }
 
-        /* =========================================================================
-           DISSENY ESPECÍFIC PER A MÒBILS (Pantalles inferiors a 600 píxels d'amplada)
-           ========================================================================= */
+        /* Personalització de la barra de scroll perquè sigui fina i elegant */
+        .contenidor-principal::-webkit-scrollbar {
+            width: 6px;
+        }
+        .contenidor-principal::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .contenidor-principal::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        .contenidor-principal::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* DISSENY PER A MÒBILS */
         @media (max-width: 600px) {
             .grelha-enllacos {
-                gap: 12px; /* Espaiat més compacte */
+                gap: 12px;
             }
             .item-enllac { 
-                width: 100px; /* Targetes més petites perquè hi caben 3 per línia */
+                width: 95px; /* Caben 3 columnes netes a la majoria de mòbils */
             }
             .item-enllac img { 
-                height: 100px; /* Imatges proporcionalment quadrades més compactes */
-                margin-bottom: 6px;
+                height: 95px;
+                margin-bottom: 5px;
             }
             .item-enllac a {
-                font-size: 10px; /* Text lleugerament més petit per evitar talls agres */
+                font-size: 10px;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="grelha-enllacos" id="contenidorEnllacos">Carregant projectes...</div>
+    <div class="contenidor-principal">
+        <div class="grelha-enllacos" id="contenidorEnllacos">Carregant projectes...</div>
+    </div>
 
     <script>
         // =========================================================================
@@ -114,7 +138,6 @@
                         const divItem = document.createElement('div');
                         divItem.className = 'item-enllac';
 
-                        // Enllaç imatge
                         const aImg = document.createElement('a');
                         aImg.href = url;
                         aImg.target = "_blank";
@@ -123,7 +146,6 @@
                         img.src = BASE_URL_DRIVE + idDrive;
                         aImg.appendChild(img);
 
-                        // Enllaç text
                         const aTxt = document.createElement('a');
                         aTxt.href = url;
                         aTxt.target = "_blank";
@@ -135,25 +157,8 @@
                         contenidor.appendChild(divItem);
                     }
                 }
-                
-                // CRUCIAL: Un cop pintats els elements, enviem l'alçada automàtica a Google Sites
-                enviarAlcadaAGoogleSites();
             })
             .catch(err => { contenidor.innerHTML = "Error de connexió."; });
-
-        // Escolta quan la finestra canvia de mida (per exemple al girar el mòbil) per recalcular l'alçada
-        window.addEventListener('resize', enviarAlcadaAGoogleSites);
-
-        function enviarAlcadaAGoogleSites() {
-            // Calculem exactament quants píxels ocupa el contingut de la pàgina
-            const alcadaReal = document.body.scrollHeight;
-            // Enviem un missatge a la finestra mare (Google Sites) amb la nova mida
-            window.parent.postMessage({
-                sentinel: 'amp',
-                type: 'embed-size',
-                height: alcadaReal
-            }, '*');
-        }
     </script>
 </body>
 </html>
