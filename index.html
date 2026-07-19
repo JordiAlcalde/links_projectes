@@ -134,23 +134,20 @@
     <script>
         // =========================================================================
         //  PEGA AQUÍ EL TEU ENLLAÇ CSV DEL GOOGLE SHEETS
+        //  https://docs.google.com/spreadsheets/d/e/2PACX-1vRw8f4wmgIUeI9A5893zHJXTr7zrZMWNRFKW6ydFbKnuax2gL5QbOs9_S_iyJ07zC-7FqvLYQn1nIuT/pub?gid=468442670&single=true&output=csv
         // =========================================================================
         const URL_CSV_SHEETS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRw8f4wmgIUeI9A5893zHJXTr7zrZMWNRFKW6ydFbKnuax2gL5QbOs9_S_iyJ07zC-7FqvLYQn1nIuT/pub?gid=468442670&single=true&output=csv";
         
         const BASE_URL_DRIVE = "https://lh3.googleusercontent.com/d/";
         const contenidor = document.getElementById('contenidorEnllacos');
 
-        let urlPaginaActual = "";
-        let titolPaginaActual = "";
-        
-        try { 
-            const referrer = decodeURIComponent(document.referrer).toLowerCase();
-            urlPaginaActual = referrer;
-            // Extraiem l'última part de la URL (el títol de la pàgina que Sites converteix amb guions)
-            const partsUrl = referrer.split('/');
-            titolPaginaActual = partsUrl[partsUrl.length - 1] || "";
-        } catch(e) { 
-            urlPaginaActual = document.referrer.toLowerCase(); 
+        // =========================================================================
+        // LLEGIM L'ETIQUETA DE LA URL (ex: #orquestra-de-gats)
+        // =========================================================================
+        let hashActual = "";
+        if (window.location.hash) {
+            // Llegim el contingut després del #, el passem a minúscules i eliminem espais externs
+            hashActual = decodeURIComponent(window.location.hash.substring(1)).toLowerCase().trim();
         }
 
         fetch(URL_CSV_SHEETS)
@@ -168,19 +165,17 @@
                         const url = columnes[1] ? columnes[1].replace(/"/g, "").trim() : "";
                         const idDrive = columnes[2].replace(/"/g, "").trim();
 
-                        // --- SISTEMA DE FILTRATGE REFORÇAT ---
-                        const textNet = txt.toLowerCase().trim();
-                        // Creem una versió del text amb guions, tal com fa Google Sites a les URLs
-                        const textAmbGuions = textNet.replace(/\s+/g, '-'); 
+                        // =========================================================================
+                        // CONVERTIM EL NOM DEL SHEETS AL FORMAT NET (Slug)
+                        // =========================================================================
+                        // Passa a minúscules, treu espais extrems i canvia QUALSEVOL espai intern per un sol guió
+                        const projecteSlug = txt.toLowerCase().trim().replace(/\s+/g, '-');
 
-                        // 1. Si la URL coincideix
-                        if (url && urlPaginaActual.includes(url.toLowerCase().trim())) continue;
-                        
-                        // 2. Si el títol final de la URL coincideix amb el nom del projecte (normal o amb guions)
-                        if (titolPaginaActual && (titolPaginaActual === textAmbGuions || titolPaginaActual.includes(textAmbGuions))) continue;
-                        
-                        // 3. Seguretat per si de cas es compara el text net directament a la URL
-                        if (urlPaginaActual.includes(textAmbGuions)) continue;
+                        // FILTRATGE DEFINITIU: Si el format net coincideix amb el # de la URL, el saltem
+                        if (hashActual && projecteSlug === hashActual) {
+                            continue; 
+                        }
+                        // =========================================================================
 
                         const divItem = document.createElement('div');
                         divItem.className = 'item-enllac';
