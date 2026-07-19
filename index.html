@@ -2,168 +2,137 @@
 <html lang="ca">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria de Projectes Autónoma</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Configura aquí la font que vulguis (Montserrat) -->
+    <title>Galeria Fluida</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    
     <style>
-        /* CONFIGURACIÓ DE DISSENY DIRECTA DES D'AQUÍ */
-        body {
-            background-color: #FFFFFF; /* Fons blanc */
-            color: #000000;            /* Text negre */
-            font-family: 'Montserrat', sans-serif;
-            font-size: 11px;
-            font-weight: 400; /* Normal */
-            margin: 0;
-            padding: 10px;
+        body { 
+            background-color: #FFFFFF; 
+            color: #000000; 
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 11px; 
+            margin: 0; 
+            padding: 10px; 
+            /* Evitem que apareguin barres de desplaçament dobles molt lletges */
+            overflow: hidden; 
         }
-
-        .grelha-enllacos {
-            display: grid;
-            /* L'ordinador farà tantes columnes com pugui (fins a 6), però al mòbil es repartiran soles */
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 15px;
-            width: 100%;
+        
+        /* CONTENIDOR FLEXIBLE: Els elements flueixen com paraules */
+        .grelha-enllacos { 
+            display: flex;
+            flex-wrap: wrap;       /* Activa el salt de línia automàtic quan no hi ha lloc */
+            justify-content: center; /* Centra els projectes a la pantalla */
+            gap: 20px;             /* Espai de separació constant entre blocs */
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        
+        /* CADA ELEMENT INDIVIDUAL (Targeta fixa de mida fixa) */
+        .item-enllac { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            width: 130px;          /* Mida constant i perfecta tant per PC com per Mòbil */
             box-sizing: border-box;
         }
-
-        .item-enllac {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            width: 100%; /* Ens assegurem que el contenidor ocupi el seu espai */
+        
+        .item-enllac img { 
+            width: 100%; 
+            height: 130px;         /* Forcem que siguin perfectament quadrades */
+            object-fit: cover; 
+            border: none; 
+            margin-bottom: 8px; 
+            cursor: pointer; 
         }
-
-        .item-enllac img {
+        
+        .item-enllac a { 
+            color: #000000; 
+            text-decoration: none; 
+            line-height: 1.3; 
+            word-wrap: break-word;
             width: 100%;
-            max-width: 150px; /* Evita que creixin massa en pantalles intermèdies */
-            height: auto;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            border: none;
-            margin-bottom: 8px;
-            cursor: pointer;
         }
-
-        .item-enllac img:hover {
-            opacity: 0.8;
-        }
-
-        .item-enllac a {
-            color: #000000; /* Text del enllaç negre */
-            text-decoration: none;
-            line-height: 1.3;
-        }
-
-        .item-enllac a:hover {
-            text-decoration: underline;
+        
+        .item-enllac a:hover { 
+            text-decoration: underline; 
         }
     </style>
 </head>
 <body>
 
-    <div class="grelha-enllacos" id="contenidorEnllacos">
-        <div style="grid-column: 1 / -1; text-align: center; padding: 20px;">Carregant projectes...</div>
-    </div>
+    <div class="grelha-enllacos" id="contenidorEnllacos">Carregant projectes...</div>
 
     <script>
         // =========================================================================
-        //  PEGA AQUÍ L'ENLLAÇ CSV QUE HAS COPIAT AL PAS 1
+        //  PEGA AQUÍ EL TEU ENLLAÇ CSV DEL GOOGLE SHEETS
         // =========================================================================
         const URL_CSV_SHEETS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRw8f4wmgIUeI9A5893zHJXTr7zrZMWNRFKW6ydFbKnuax2gL5QbOs9_S_iyJ07zC-7FqvLYQn1nIuT/pub?gid=468442670&single=true&output=csv";
-
+        
         const BASE_URL_DRIVE = "https://lh3.googleusercontent.com/d/";
         const contenidor = document.getElementById('contenidorEnllacos');
 
-        // Detectem i decodifiquem la URL real de la finestra superior (Google Sites)
         let urlPaginaActual = "";
-        try {
-            urlPaginaActual = decodeURIComponent(document.referrer).toLowerCase();
-        } catch(e) {
-            urlPaginaActual = document.referrer.toLowerCase();
-        }
+        try { urlPaginaActual = decodeURIComponent(document.referrer).toLowerCase(); } catch(e) { urlPaginaActual = document.referrer.toLowerCase(); }
 
-        // Descarreguem el CSV de Google Sheets
         fetch(URL_CSV_SHEETS)
             .then(response => response.text())
             .then(text => {
-                const dades = csvAArray(text);
-                generarGaleria(dades);
-            })
-            .catch(err => {
-                contenidor.innerHTML = '<div style="grid-column: span 5; color: red; text-align:center;">Error en connectar amb les dades.</div>';
-            });
+                const llines = text.split("\n");
+                contenidor.innerHTML = "";
+                
+                for (let i = 1; i < llines.length; i++) {
+                    if (!llines[i].trim()) continue;
+                    const columnes = llines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    
+                    if (columnes[0] && columnes[2]) {
+                        const txt = columnes[0].replace(/"/g, "").trim();
+                        const url = columnes[1] ? columnes[1].replace(/"/g, "").trim() : "";
+                        const idDrive = columnes[2].replace(/"/g, "").trim();
 
-        // Funció interna per processar el text CSV de manera neta
-        function csvAArray(text) {
-            const llines = text.split("\n");
-            const resultats = [];
-            
-            // Saltem la primera línia (capçalera) i iterem
-            for (let i = 1; i < llines.length; i++) {
-                if (!llines[i].trim()) continue;
-                
-                // Separem per comes (tenint en compte possibles cometes)
-                const columnes = llines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                
-                if (columnes[0] && columnes[2]) {
-                    resultats.push({
-                        text: columnes[0].replace(/"/g, "").trim(),
-                        url_desti: columnes[1] ? columnes[1].replace(/"/g, "").trim() : "",
-                        drive_id: columnes[2].replace(/"/g, "").trim()
-                    });
+                        if (url && urlPaginaActual.includes(url.toLowerCase().trim())) continue;
+
+                        const divItem = document.createElement('div');
+                        divItem.className = 'item-enllac';
+
+                        // Enllaç imatge
+                        const aImg = document.createElement('a');
+                        aImg.href = url;
+                        aImg.target = "_blank";
+                        aImg.rel = "noopener noreferrer";
+                        const img = document.createElement('img');
+                        img.src = BASE_URL_DRIVE + idDrive;
+                        aImg.appendChild(img);
+
+                        // Enllaç text
+                        const aTxt = document.createElement('a');
+                        aTxt.href = url;
+                        aTxt.target = "_blank";
+                        aTxt.rel = "noopener noreferrer";
+                        aTxt.textContent = txt;
+
+                        divItem.appendChild(aImg);
+                        divItem.appendChild(aTxt);
+                        contenidor.appendChild(divItem);
+                    }
                 }
-            }
-            return resultats;
-        }
-
-        function generarGaleria(dadesEnllacos) {
-            contenidor.innerHTML = "";
-
-            // Filtrem de manera robusta per ocultar el projecte actual
-            const projectesFiltrats = dadesEnllacos.filter(item => {
-                if (!item.url_desti) return true;
-                const urlDestiNeta = item.url_desti.toLowerCase().trim();
-                return !urlPaginaActual.includes(urlDestiNeta);
-            });
-
-            if (projectesFiltrats.length === 0) {
-                contenidor.innerHTML = '<div style="grid-column: span 5; text-align: center;">No hi ha altres projectes per mostrar.</div>';
-                return;
-            }
-
-            // Dibuixem els elements utilitzant un "target=_parent" real (que ara sí funcionarà!)
-            projectesFiltrats.forEach(item => {
-                const divItem = document.createElement('div');
-                divItem.className = 'item-enllac';
-
-                const rutaImatge = BASE_URL_DRIVE + item.drive_id;
-
-                // Enllaç de la imatge
-                const enllacImg = document.createElement('a');
-                enllacImg.href = item.url_desti;
-                enllacImg.target = "_blank"; 
                 
-                const img = document.createElement('img');
-                img.src = rutaImatge;
-                img.alt = item.text;
-                
-                enllacImg.appendChild(img);
+                // CRUCIAL: Un cop pintats els elements, enviem l'alçada automàtica a Google Sites
+                enviarAlcadaAGoogleSites();
+            })
+            .catch(err => { contenidor.innerHTML = "Error de connexió."; });
 
-                // Enllaç del text
-                const enllacText = document.createElement('a');
-                enllacText.href = item.url_desti;
-                enllacText.target = "_blank"; 
-                enllacText.textContent = item.text;
+        // Escolta quan la finestra canvia de mida (per exemple al girar el mòbil) per recalcular l'alçada
+        window.addEventListener('resize', enviarAlcadaAGoogleSites);
 
-                divItem.appendChild(enllacImg);
-                divItem.appendChild(enllacText);
-                contenidor.appendChild(divItem);
-            });
+        function enviarAlcadaAGoogleSites() {
+            // Calculem exactament quants píxels ocupa el contingut de la pàgina
+            const alcadaReal = document.body.scrollHeight;
+            // Enviem un missatge a la finestra mare (Google Sites) amb la nova mida
+            window.parent.postMessage({
+                sentinel: 'amp',
+                type: 'embed-size',
+                height: alcadaReal
+            }, '*');
         }
     </script>
 </body>
