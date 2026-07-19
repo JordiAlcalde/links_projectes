@@ -14,36 +14,39 @@
             padding: 5px; 
             height: 100%;
             box-sizing: border-box;
+            overflow: hidden; /* Evitem qualsevol scroll a la finestra exterior */
         }
 
-        /* CONTENIDOR PRINCIPAL: Activa l'scroll vertical si el contingut supera l'alçada */
+        /* CONTENIDOR PRINCIPAL: Limita l'alçada i activa l'scroll HORITZONTAL */
         .contenidor-principal {
             width: 100%;
             height: 100%;
-            overflow-x: hidden;
-            overflow-y: auto; /* Permet lliscar cap avall */
-            padding-right: 5px; /* Espai per a la barra de scroll */
+            overflow-x: auto; /* Activa l'scroll lateral si els elements surten per la dreta */
+            overflow-y: hidden; /* Bloqueja el moviment vertical */
+            padding-bottom: 5px;
+            display: flex;
+            align-items: center; /* Centra els elements verticalment */
         }
         
-        /* LA GRAELLA FLEXIBLE */
+        /* LA GRAELLA: Ara es converteix en una línia contínua sense salts */
         .grelha-enllacos { 
             display: flex;
-            flex-wrap: wrap;       
-            justify-content: center; 
-            gap: 16px;             
-            width: 100%; 
-            box-sizing: border-box; 
+            flex-direction: row;  /* Força a col·locar-se un al costat de l'altre */
+            flex-wrap: nowrap;     /* PROHIBEIX saltar de línia cap avall */
+            gap: 20px;             
+            padding-left: 10px;
+            padding-right: 20px;
         }
         
-        /* CADA ELEMENT INDIVIDUAL (PC) */
+        /* CADA ELEMENT INDIVIDUAL (Mida fixa idèntica per a tot arreu) */
         .item-enllac { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             text-align: center; 
             width: 125px;          
+            flex-shrink: 0; /* CRUCIAL: Evita que el navegador aixafi les imatges per encabir-les */
             box-sizing: border-box;
-            margin-bottom: 5px;
         }
         
         .item-enllac img { 
@@ -51,7 +54,7 @@
             height: 125px;         
             object-fit: cover; 
             border: none; 
-            margin-bottom: 6px; 
+            margin-bottom: 8px; 
             cursor: pointer; 
         }
         
@@ -67,9 +70,9 @@
             text-decoration: underline; 
         }
 
-        /* Personalització de la barra de scroll perquè sigui fina i elegant */
+        /* Estilització de la barra d'scroll horitzontal inferior */
         .contenidor-principal::-webkit-scrollbar {
-            width: 6px;
+            height: 6px; /* Alçada de la barra horitzontal */
         }
         .contenidor-principal::-webkit-scrollbar-track {
             background: #f1f1f1;
@@ -82,20 +85,13 @@
             background: #a8a8a8;
         }
 
-        /* DISSENY PER A MÒBILS */
+        /* Ajust lleuger per a mòbils (només fem les targetes un pèl més compactes) */
         @media (max-width: 600px) {
-            .grelha-enllacos {
-                gap: 12px;
-            }
             .item-enllac { 
-                width: 95px; /* Caben 3 columnes netes a la majoria de mòbils */
+                width: 110px;          
             }
             .item-enllac img { 
-                height: 95px;
-                margin-bottom: 5px;
-            }
-            .item-enllac a {
-                font-size: 10px;
+                height: 110px;         
             }
         }
     </style>
